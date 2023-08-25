@@ -49,10 +49,52 @@ class MyAppState extends ChangeNotifier {
 class MyHomePage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(
+        title: Text(
+          "Name Generator",
+          style: TextStyle(color: Theme.of(context).colorScheme.onPrimary),
+        ),
+        backgroundColor: Theme.of(context).colorScheme.primary,
+      ),
+      body: Row(
+        children: [
+          SafeArea(
+            child: NavigationRail(
+              extended: false,
+              destinations: [
+                NavigationRailDestination(
+                  icon: Icon(Icons.home),
+                  label: Text('Home'),
+                ),
+                NavigationRailDestination(
+                  icon: Icon(Icons.favorite),
+                  label: Text('Favorites'),
+                ),
+              ],
+              selectedIndex: 0,
+              onDestinationSelected: (value) {
+                print('selected: $value');
+              },
+            ),
+          ),
+          Expanded(
+            child: Container(
+              color: Theme.of(context).colorScheme.primaryContainer,
+              child: GeneratorPage(),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+class GeneratorPage extends StatelessWidget {
+  @override
+  Widget build(BuildContext context) {
     var appState = context.watch<MyAppState>();
     var pair = appState.current;
-
-    final theme = Theme.of(context);
 
     IconData icon;
     if (appState.favorites.contains(pair)) {
@@ -61,47 +103,34 @@ class MyHomePage extends StatelessWidget {
       icon = Icons.favorite_border;
     }
 
-    return Scaffold(
-        appBar: AppBar(
-          title: Text(
-            "Name Generator",
-            style: TextStyle(color: theme.colorScheme.onPrimary),
-          ),
-          backgroundColor: theme.colorScheme.primary,
-        ),
-        body: Center(
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.center,
+    return Center(
+      child: Column(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          BigCard(pair: pair),
+          SizedBox(height: 10),
+          Row(
+            mainAxisSize: MainAxisSize.min,
             children: [
-              Text(
-                'A random Amazing idea:',
-                style: TextStyle(fontSize: 30),
+              ElevatedButton.icon(
+                onPressed: () {
+                  appState.toggleFavorite();
+                },
+                icon: Icon(icon),
+                label: Text('Like'),
               ),
-              BigCard(pair: pair),
-              SizedBox(height: 10),
-              Row(
-                mainAxisSize: MainAxisSize.min,
-                children: [
-                  ElevatedButton.icon(
-                    onPressed: () => appState.toggleFavorite(),
-                    icon: Icon(
-                      icon,
-                      color: Colors.red,
-                    ),
-                    label: Text("Like"), //label text
-                  ),
-                  SizedBox(
-                    width: 20,
-                  ),
-                  ElevatedButton(
-                    onPressed: () => appState.getNext(),
-                    child: Text("Next"),
-                  ),
-                ],
+              SizedBox(width: 10),
+              ElevatedButton(
+                onPressed: () {
+                  appState.getNext();
+                },
+                child: Text('Next'),
               ),
             ],
           ),
-        ));
+        ],
+      ),
+    );
   }
 }
 
