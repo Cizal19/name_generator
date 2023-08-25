@@ -44,6 +44,11 @@ class MyAppState extends ChangeNotifier {
     }
     notifyListeners();
   }
+
+  void removePair(pair) {
+    favorites.remove(pair);
+    notifyListeners();
+  }
 }
 
 class MyHomePage extends StatefulWidget {
@@ -214,6 +219,11 @@ class FavoritesPage extends StatelessWidget {
           ListTile(
             leading: Icon(Icons.favorite),
             title: Text(pair.asLowerCase),
+            trailing: IconButton(
+                onPressed: () {
+                  appState.removePair(pair);
+                },
+                icon: Icon(Icons.delete)),
           ),
       ],
     );
